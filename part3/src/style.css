@@ -1,0 +1,120 @@
+#title {
+    font-family: 'Impact', sans-serif;
+    color: #02c93a;
+}
+
+.navbar {
+    background-color: #fff;
+  }
+
+.dropdown a:hover {
+  color: #fff;
+  background-color: #02c93a;
+  border-color: #fff;
+}
+
+.dropdown-menu {
+    color: #fff !important;
+    background-color: #02c93a !important;
+}
+
+.dropdown-item:hover {
+    background-color: #fff !important;
+    color: #02c93a !important;
+}
+
+.list {
+    color: #fff;
+    background-color: #02c93a !important;
+}
+
+.remove {
+    color: #fff;
+    background-color: #02c93a !important;
+}
+
+.purchase {
+    color: #fff;
+    background-color: #02c93a !important;
+}
+
+.list:hover {
+    background-color: #8effae !important;
+    color: #02c93a !important;
+}
+
+th {
+    color: #fff;
+}
+
+table, td {
+   text-align: center;
+}
+
+#balance {
+    margin-left: 3px;
+}
+
+#dataTable {
+    /* color: white; */
+}
+
+#tableDIV {
+    width: 100%;
+}
+
+#inputGroup-sizing-default{
+    background-color: #02c93a;
+    color: #fff;
+    border-color: #02c93a;
+    /* padding: 10px; */
+    margin-left: 16px;
+}
+
+#staticUser, #staticBalance {
+    background-color: #fff;
+    color: #02c93a;
+    border-color: #02c93a;
+    width: 50px;
+    padding: 5px;
+}
+
+#user {
+    background-color: #fff;
+    color: #02c93a;
+    border-color: #02c93a;
+    width: 50px;
+    padding: 5px;
+    text-align: center;
+}
+
+#item{
+    background-color: #fff;
+    color: #02c93a;
+    border-color: #02c93a;
+    width: 150px;
+    padding: 5px;
+    text-align: center;
+}
+
+#cost{
+    background-color: #fff;
+    color: #02c93a;
+    border-color: #02c93a;
+    width: 85px;
+    padding: 5px;
+    text-align: center;
+}
+
+#list{
+    font-size: 14px;
+    vertical-align: middle;
+    padding-left: 10px;
+    padding-bottom: 2px;
+
+}
+
+#dataTable{
+  text-align: center;
+  border-collapse: collapse;
+}

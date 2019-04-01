@@ -1,0 +1,86 @@
+#title, #sub {
+    font-family: 'Impact', sans-serif;
+    color: #fff;
+    text-align: center;
+}
+
+#sub {
+    font-style: italic;
+}
+
+#air{
+    background-color: #fff;
+    color: #1260af;
+    border-color: #fff;
+}
+
+#login {
+    /* width: 50%; */
+}
+
+body {
+  background-image: url("https://wallpaperplay.com/walls/full/e/0/f/65950.jpg#.XKJt7tKa9Vg.link"); 
+  background-size: cover;
+  display:flex;
+  align-items:center;
+  height: 100%;
+}
+
+html {
+    height: 100%;
+}
+
+.container-fluid {
+    height: 100%;
+    overflow-y: hidden;
+}
+
+#inputGroup-sizing-default {
+    background-color: #fff;
+    color: #1260af !important;
+    border-color: #1260af;
+    width: 100px;
+    /* padding: 10px; */
+    /* margin-left: 16px; */
+}
+
+.input-group {
+    margin: 3px;
+}
+
+.row {
+    padding-left: 25% !important;
+    padding-right: 25% !important;
+    padding-top: 10% !important;
+    padding-bottom: 10% !important;
+}
+
+#link {
+    color: #fff;
+}
+
+#username, #password {
+    background-color: #fff;
+    color: #1260af;
+    border-color: #1260af;
+    /* width: 50px; */
+    padding: 5px;
+    text-align: center;
+    /* border: none;
+    border-bottom: 1px solid #fff; */
+}
+
+#button {
+    background-color: #fff;
+    color: #1260af;
+    border-color: #1260af;
+}
+
+/* #password {
+    background-color: #fff;
+    color: #02c93a;
+    border-color: #02c93a;
+    width: 150px;
+    padding: 5px;
+    text-align: center;
+} */
