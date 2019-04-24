@@ -4,8 +4,14 @@
     text-align: center;
 }
 
+#title {
+    font-size: 50pt;
+}
+
 #sub {
     font-style: italic;
+    /* background-color: #fff; */
+    /* color: #1260af; */
 }
 
 #air{
@@ -19,7 +25,7 @@
 }
 
 body {
-  background-image: url("https://wallpaperplay.com/walls/full/e/0/f/65950.jpg#.XKJt7tKa9Vg.link"); 
+  background-image: url("../assets/city.jpg"); 
   background-size: cover;
   display:flex;
   align-items:center;
@@ -44,6 +50,17 @@ html {
     /* margin-left: 16px; */
 }
 
+#user, #pass, #bal, #balance {
+    background-color: #fff;
+    color: #fff;
+    border-color: #fff;
+    width: 100px;
+    background: transparent;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+}
+
 .input-group {
     margin: 3px;
 }
@@ -60,20 +77,28 @@ html {
 }
 
 #username, #password {
-    background-color: #fff;
-    color: #1260af;
+    /* background-color: #fff; */
+    background: transparent;
+    color: #fff;
     border-color: #1260af;
     /* width: 50px; */
     padding: 5px;
     text-align: center;
-    /* border: none;
-    border-bottom: 1px solid #fff; */
+    border: none;
+    border-bottom: 1px solid #fff;
 }
 
 #button {
     background-color: #fff;
     color: #1260af;
     border-color: #1260af;
+}
+
+#loginBtn {
+    /* background-color: #fff; */
+    color: #fff;
+    /* border-color: #1260af; */
+    background: transparent;
 }
 
 /* #password {

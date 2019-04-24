@@ -11,7 +11,7 @@
     <!-- <link rel="icon" type="image/png" href="./favicon.png"> -->
 
     <!-- Local CSS -->
-    <link rel="stylesheet" type="text/css" href="login-style.css">
+    <link rel="stylesheet" type="text/css" href="/styles/login-style.css">
 
     <!-- Custom Font -->
     <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
@@ -33,7 +33,7 @@
 
 </head>
 
-<body style="background-color:#02c93a">
+<body>
 
 
     <div class="container-fluid h-100">
@@ -42,29 +42,29 @@
 
             <div class="col">
 
-                <h1 class="display-1" id="title">SellMyStuff</h1>
+                <h1 class="display-1" id="title">Airline Consortium</h1>
 
                 <!-- <h1 class="display-4" id="title">Login</h1> -->
 
                 <div class="input-group">
                     <div class="input-group-prepend">
-                        <span class="input-group-text" id="inputGroup-sizing-default">Username</span>
+                        <span class="input-group-text" id="user">Username:</span>
                     </div>
-                    <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default" id="username">
+                    <input type="text" class="form-control" aria-label="Default" aria-describedby="user" id="username">
                 </div>
 
                 <div class="input-group">
                     <div class="input-group-prepend">
-                        <span class="input-group-text" id="inputGroup-sizing-default">Password</span>
+                        <span class="input-group-text" id="pass">Password:</span>
                     </div>
-                    <input type="password" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default" id="password">
+                    <input type="password" class="form-control" aria-label="Default" aria-describedby="pass" id="password">
                 </div>
 
                  <div class="input-group">
                      <div class="input-group-prepend">
-                         <span class="input-group-text" id="inputGroup-sizing-default">Balance</span>
+                         <span class="input-group-text" id="bal">Balance ($):</span>
                      </div>
-                     <input type="number" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default" id="balance">
+                     <input type="number" class="form-control" aria-label="Default" aria-describedby="bal" id="balance">
                  </div>
 
                 <div class="row text-center">
@@ -129,7 +129,7 @@
                     console.log(response);
                 }
                 alert('Account created!');
-                window.location.href = "login.html";
+                window.location.href = "/views/login.html";
             }
         }
 
