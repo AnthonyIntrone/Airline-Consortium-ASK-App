@@ -44,11 +44,12 @@
 
                 <h1 class="display-1" id="title">Airline Consortium</h1>
 
-                <!-- <h1 class="display-4" id="title">Login</h1> -->
+                <h4 id="sub">Enter your airlines' credentials below and join the fun!</h4>
+                <h5 id="sub">Note: Membership costs an initial fee of 1 Ether.</h5>
 
                 <div class="input-group">
                     <div class="input-group-prepend">
-                        <span class="input-group-text" id="user">Username:</span>
+                        <span class="input-group-text" id="user">Airline Name:</span>
                     </div>
                     <input type="text" class="form-control" aria-label="Default" aria-describedby="user" id="username">
                 </div>
@@ -62,24 +63,24 @@
 
                 <div class="input-group">
                     <div class="input-group-prepend">
-                        <span class="input-group-text" id="addr">Address:</span>
+                        <span class="input-group-text" id="addr">Eth Address:</span>
                     </div>
                     <input type="address" class="form-control" aria-label="Default" aria-describedby="addr" id="address">
                 </div>
 
-                 <div class="input-group">
+                 <!-- <div class="input-group">
                      <div class="input-group-prepend">
                          <span class="input-group-text" id="bal">Balance ($):</span>
                      </div>
                      <input type="number" class="form-control" aria-label="Default" aria-describedby="bal" id="balance">
-                 </div>
+                 </div> -->
 
                 <div class="row text-center">
                     <div class="col-6">
-                        <button type="number" onclick="create()" class="btn" id="button">Create Account</button>
+                        <button type="number" onclick="join()" class="btn" id="button">Join</button>
                     </div>
                     <div class="col-6 align-self-center">
-                        <a href="login.html" id="link">Back to user login</a>
+                        <a href="airline_login.html" id="link">Back to airline login</a>
                     </div>
                 </div>
 
@@ -95,24 +96,10 @@
 
         function create() {
 
-            // Grab Username
-            // Grab Password
-
-            // Send to server, see if user exists
-            // if yes, send back account value
-            // if no, send back error
-
-            // open index.html with logged in user
-
             var username = document.getElementById('username').value;
             var password = document.getElementById('password').value;
             var address = document.getElementById('address').value;
             var balance = document.getElementById('balance').value;
-
-            console.log(username);
-            console.log(password);
-            console.log(address);
-            console.log(balance);
 
             if (username == '') {
                 alert("Please enter username");
@@ -127,10 +114,10 @@
                 alert("Please enter valid balance");
             }
             else {
-                var jsonToSend = { "username": username, "password": password, "address": address, "balance": balance };
+                var jsonToSend = { "username": username, "password": password, "address": address};
 
                 var req = new XMLHttpRequest();
-                req.open('POST', '/createUser', true);
+                req.open('POST', '/createAirline', true);
                 req.setRequestHeader("Content-type", "application/json");
 
                 jsonToSend = JSON.stringify(jsonToSend);
@@ -141,7 +128,7 @@
                     console.log(response);
                 }
                 alert('Account created!');
-                window.location.href = "/views/login.html";
+                window.location.href = "/views/airline_login.html";
             }
         }
 

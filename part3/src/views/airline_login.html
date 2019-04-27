@@ -43,7 +43,7 @@
 
                 <h1 class="display-1" id="title">Airline Consortium</h1>
 
-                <h4 id="sub">User Login</h4>
+                <h4 id="sub">Airline Login</h4>
 
                 <div class="input-group">
                     <div class="input-group-prepend">
@@ -66,10 +66,10 @@
                         <button type="button" onclick="login()" method="GET" class="btn" id="button">Login</button>
                     </div>
                     <div class="col-4 align-self-center">
-                        <a href="/views/airline_login.html" id="link">Airline Login</a>
+                        <a href="/views/login.html" id="link">User Login</a>
                     </div>
                     <div class="col-4 align-self-center">
-                        <a href="/views/create.html" id="link">Create an account</a>
+                        <a href="/views/airline_create.html" id="link">Join the consortium!</a>
                     </div>
                 </div>
 
@@ -101,7 +101,7 @@
                 };
 
                 var req = new XMLHttpRequest();
-                req.open('POST', '/login', true);
+                req.open('POST', '/airlineLogin', true);
                 req.setRequestHeader("Content-type", "application/json");
 
                 jsonToSend = JSON.stringify(jsonToSend);
@@ -112,7 +112,7 @@
                     var valid = response.valid;
                     console.log(valid);
                     if (valid) {
-                        window.location.href = "/views/index.html";
+                        window.location.href = "/views/airline_index.html";
                     } else {
                         alert("ERROR! Incorrect login");
                     }

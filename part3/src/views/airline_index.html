@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Favicon -->
+    <!-- <link rel="icon" type="image/png" href="./favicon.png"> -->
+
+    <!-- Local CSS -->
+    <link rel="stylesheet" type="text/css" href="/styles/style.css">
+
+    <!-- font awesome icons -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
+        integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+
+    <!-- Custom Font -->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+        integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+    <!-- Bootstrap JS plugins -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+        integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous">
+    </script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+        integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous">
+    </script>
+
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar w-100">
+
+        <ul class="nav navbar-nav">
+            <li class="nav-item">
+                <a class="navbar-brand" id='title' href="#">Airline Consortium</a>
+                <span class="align=middle" style="color: #1260af;">Logged in as: </span>
+                <span class="align=middle" id="staticUser"></span>
+            </li>
+        </ul>
+
+        <div class="form-inline ml-auto">
+            <button type="button" onclick="logOut()" class="btn list" data-value="NONE">Log out
+                <i class="material-icons" id='list'>send</i>
+            </button>
+        </div>
+
+    </nav>
+
+    <div class="row h-100">
+        <div class="col-6 h-100">
+            <nav class="navbar navbar-expand-lg navbar w-100">
+                <a class="navbar-brand" id='title' style="padding-left: 40%" href="#">Scheduled Flights</a>
+
+                <div class="btn-group">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                         <span class="caret"></span> <i class="fa fa-plus"></i>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <form>
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="flight_num" placeholder="Flight Number">
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="to" placeholder="To">
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="from" placeholder="From">
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="departing" placeholder="Departing Time">
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="arriving" placeholder="Arriving Time">
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="airline" placeholder="Airline">
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="price" placeholder="Price">
+                            </div>
+                            <button type="button" onclick="addFlight()" class="btn btn-primary">Add Flight</button>
+                        </form>
+                    </ul>
+                </div>
+            </nav>
+            <div id="tableDIV" sylte="width: 80%;">
+                <p id="flightsTable"></p>
+            </div>
+        </div>
+
+        <div class="col-6 h-100">
+            <nav class="navbar navbar-expand-lg navbar w-100">
+                <a class="navbar-brand" id='title' style="padding-left: 40%" href="#">Current Requests</a>
+                <button type="button" onclick="approveReq()" class="btn btn-req btn-success"><i class="fa fa-check"></i></button>
+                <button type="button" onclick="denyReq()" class="btn btn-req btn-danger"><i class="fa fa-times"></i></button>
+            </nav>
+            <div id="tableDIV" style="width: 100%; padding-left: 10%;">
+                <p id="requestsTable"></p>
+            </div>
+        </div>
+    </div>
+
+    <!--...........................................................................................................-->
+
+    <script>
+        var user = '';
+        var bal = '';
+
+        var checkboxes = [];
+
+        function approveReq() {
+            var req = new XMLHttpRequest();
+            req.open('POST', '/approveReq', true);
+            req.setRequestHeader("Content-type", "application/json");
+        }
+
+        /*
+         * 1.) Get check box to pull data
+         * 2.) Send to server
+        */
+        function denyReq() {
+            var req = new XMLHttpRequest();
+            req.open('POST', '/denyReq', true);
+            req.setRequestHeader("Content-type", "application/json");
+
+            var name = "";
+            for (var i=0; i<checkboxes.length; i++) {
+                if (checkboxes[i].checked) {
+                    name = checkboxes[i].id;
+                    break;
+                }
+            }
+
+            req.send(JSON.stringify({user: name}));
+
+            req.onload = function () {
+                console.log(JSON.parse(req.responseText));
+                getAirlineRequests();
+            }
+        }
+
+        function addFlight() {
+            var req = new XMLHttpRequest();
+            req.open('POST', '/addFlight', true);
+            req.setRequestHeader("Content-type", "application/json");
+
+            var num = document.getElementById('flight_num').value;
+            var to = document.getElementById('to').value;
+            var from = document.getElementById('from').value;
+            var departing = document.getElementById('departing').value;
+            var arriving = document.getElementById('arriving').value;
+            var airline = document.getElementById('airline').value;
+            var price = document.getElementById('price').value;
+
+            var jsonObj = { flight_num: num, comp: airline, from: from, to: to, 
+                            departing: departing, arriving: arriving, cost: price }
+            req.send(JSON.stringify(jsonObj));
+
+            req.onload = function () {
+                console.log(JSON.parse(req.responseText));
+                getAirlineFlights();
+            }
+        }
+
+        function logOut() {
+            window.location.href = "airline_login.html";
+        }
+
+        function getAirlineFlights() {
+            var req = new XMLHttpRequest();
+            req.open('POST', '/getAirlineFlights', true);
+            req.setRequestHeader("Content-type", "application/json");
+            req.send(JSON.stringify({
+                user: user
+            }));
+
+            req.onload = function () {
+                console.log("In getFlights():");
+                var allFlights = JSON.parse(req.responseText);
+                console.log(allFlights);
+
+                //Making the headers for table along with what field they map too from mongo
+                var headers = ["Select", "Flight Number", "To", "From", "Departing", "Arriving", "Airline",
+                    "Price ($)", "Status"
+                ];
+                var rowHeaders = ["flight_num", "to", "from", "departing", "arriving", "comp", "cost", "status"];
+
+                drawTable(allFlights, 'flightsTable', headers, rowHeaders);
+            }
+        }
+
+        function getAirlineRequests() {
+            var req = new XMLHttpRequest();
+            req.open('POST', '/getAirlineRequests', true);
+            req.setRequestHeader("Content-type", "application/json");
+            req.send(JSON.stringify({
+                user: user
+            }));
+
+            req.onload = function () {
+                console.log("In getAirlineRequests():");
+                var requests = JSON.parse(req.responseText);
+                console.log(requests);
+
+                var headers = ["Select", "User", "Flight Number Booked", "Swap To", "Swap To Flight Number",
+                    "Status"
+                ];
+                var rowHeaders = ["user", "from_flight_num", "to_comp", "to_flight_num", "status"];
+
+                drawTable(requests, 'requestsTable', headers, rowHeaders);
+            }
+        }
+
+        function drawTable(itemList, dataTable, headers, rowHeaders) {
+
+            var table = document.createElement("table");
+            table.setAttribute('width', "100%");
+            table.setAttribute('cellpadding', 10);
+            var tableRow = table.insertRow(-1);
+
+            for (var i = 0; i < headers.length; i++) {
+                var tableHeader = document.createElement("th");
+                tableHeader.innerHTML = headers[i];
+                tableRow.appendChild(tableHeader);
+            }
+
+            //Creating the rows of the table
+            for (var i = 0; i < itemList.length; i++) {
+                tableRow = table.insertRow(-1);
+
+                var checkbox = document.createElement("INPUT");
+                checkbox.type = "checkbox";
+                checkbox.setAttribute("id", itemList[i][rowHeaders[0]]);
+                checkboxes.push(checkbox);
+                tableRow.appendChild(checkbox);
+
+                for (var k = 0; k < rowHeaders.length; k++) {
+                    var tableCell = tableRow.insertCell(-1);
+                    tableCell.innerHTML = itemList[i][rowHeaders[k]];
+                }
+            }
+
+            var itemTable = document.getElementById(dataTable);
+            itemTable.innerHTML = "";
+            itemTable.appendChild(table);
+        }
+
+        function getLogin() {
+
+            var req = new XMLHttpRequest();
+            req.open('POST', '/getAirlineUser', true);
+            req.setRequestHeader("Content-type", "application/json");
+
+            req.send();
+
+            req.onload = function () {
+                var response = JSON.parse(req.responseText);
+                console.log(response);
+                var username = response.username;
+                user = username;
+                var balance = response.balance;
+                bal = balance;
+                document.getElementById('staticUser').innerHTML = username;
+                getAirlineFlights();
+                getAirlineRequests();
+            }
+        }
+
+        function changeFlight() {
+
+            console.log(user);
+
+            var req = new XMLHttpRequest();
+            req.open('POST', '/changeFlight', true);
+            req.setRequestHeader("Content-type", "application/json");
+
+            var flight_to_swap_to = -1;
+
+            // Get all ID's of selected checkboxes
+            for (var i = 0; i < checkboxes.length; i++) {
+                // console.log(checkboxes[i]);
+                if (checkboxes[i].checked) {
+                    flight_to_swap_to = checkboxes[i].id;
+                    break;
+                }
+            }
+
+            // Send to server
+            req.send(JSON.stringify({
+                user: user,
+                swap_to: flight_to_swap_to
+            }));
+
+            req.onload = function () {
+                console.log("in swapFlight()...");
+            }
+        }
+
+        window.onload = function () {
+            getLogin();
+        };
+    </script>
+
+</body>
+
+</html>

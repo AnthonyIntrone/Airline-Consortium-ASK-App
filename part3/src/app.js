@@ -25,25 +25,14 @@ const client = new MongoClient(uri, { useNewUrlParser: true, reconnectTries: Num
         // sets the delay between every retry (milliseconds)
         reconnectInterval: 1000 
 		} */
-		
+
 client.connect(err => { 
 	if (err) throw err; 
 	console.log("Conntected to MongoDB Atlas...");
 });
 
-// client.connect(err => {
-// 	if (err) throw err;
-// 	console.log('Connected to MongoDB Atlas...');
-// 	const logins = client.db("ask").collection("logins");
-// 	const flights = client.db("ask").collection("flights");
-// 	// perform actions on the collection object
-// 	logins.findOne({}, function(err, result) {
-// 		if (err) throw err;
-// 		console.log(result);
-// 	})
-// 	client.close();
-// });
-
+// const logins = client.db("ask").collection("logins");
+// const flights = client.db("ask").collection("flights");
 
 // Our sellMyStuff.sol abi copied from Remix
 // const abi = 
@@ -75,92 +64,283 @@ app.use(bodyParser.urlencoded({
 
 var currLoggedIn = '';
 
-// SETUP DEMO
-// Sets up database with a bunch of flights from different airlines that users can reserve
-// After a user has a reserved flight, they can request a change
-// After a request is made, airline reaches out to other airline and transfers seat
-// Sends a response back to user (success/fail)
-
 // [HELPER] Gets currently logged in user
 app.post("/getUser", (req, res) => {
-	// login.findOne({
-	// 	username: currLoggedIn
-	// }, function (err, user) {
-	// 	if (user) {
-	// 		console.log("User found!");
-	// 		console.log(user);
-	// 		res.send(user);
-	// 	} else {
-	// 		console.log("Woah something went horribly wrong");
-	// 	}
-	// });
+	const logins = client.db("ask").collection("logins");
+	logins.findOne({
+		username: currLoggedIn
+	}, function (err, user) {
+		if (user) {
+			console.log("User found!");
+			console.log(user);
+			res.send(user);
+		} else {
+			console.log("Woah something went horribly wrong");
+		}
+	});
+});
+
+app.post("/getAirlineUser", (req, res) => {
+	const logins = client.db("ask").collection("airline_logins");
+	logins.findOne({
+		username: currLoggedIn
+	}, function (err, user) {
+		if (user) {
+			console.log("User found!");
+			console.log(user);
+			res.send(user);
+		} else {
+			console.log("Woah something went horribly wrong");
+		}
+	});
+});
+
+// [DATABASE] Gets all flights from the database
+app.post("/getFlights", (req, res) => {
+	const flights = client.db("ask").collection("flights");
+    flights.find().toArray(function(e, d) {
+        if (d.length > 0) {
+            // console.log("Printing flights:");
+            // console.log(JSON.stringify(d));
+            res.send(JSON.stringify(d));
+		}
+		else {
+			console.log("No flights found!");
+		}
+	});
+});
+
+app.post("/addFlight", (req, res) => {
+	const flights = client.db("ask").collection("flights");
+    try {
+		flights.insertOne( { flight_num: req.body.flight_num, comp: req.body.comp, from: req.body.from, to: req.body.to, 
+							 departing: req.body.departing, arriving: req.body.arriving, cost: req.body.cost, 
+							 status: "unbooked", booked_by: "null" } );
+		console.log("Flight added successfully!");
+		res.send({valid: true});
+	}
+	catch(e) {
+		console.log(e);
+	}
+});
+
+// [DATABASE] Gets all flights from the database for a given airline (given in req.body.user)
+app.post("/getAirlineFlights", (req, res) => {
+	const flights = client.db("ask").collection("flights");
+    flights.find().toArray(function(e, d) {
+        if (d.length > 0) {
+			var good_ones = [];
+			for (var i=0; i<d.length; ++i) {
+				var temp = d[i];
+				if (temp.comp == req.body.user) {
+					good_ones.push(temp);
+				}
+			}
+            res.send(JSON.stringify(good_ones));
+		}
+		else {
+			console.log("No flights found!");
+		}
+	});
+});
+
+// [DATABASE] Gets all flights from the database for a given airline (given in req.body.user)
+app.post("/getAirlineRequests", (req, res) => {
+	const requests = client.db("ask").collection("requests");
+	const flights = client.db("ask").collection("flights");
+
+	var good_ones = [];
+
+	// 1.) For each request, send back arrays of requests FROM user only
+	requests.find().toArray(function(e, d) {
+		if (d.length > 0) {
+			for (var i=0; i<d.length; ++i) {
+				var temp = d[i];
+				console.log(temp);
+				if (temp.from_comp == req.body.user) {
+					good_ones.push(temp);
+				}
+			}
+			res.send(JSON.stringify(good_ones))
+		}
+		else {
+			console.log("No flights found!");
+		}
+	});
+});
+
+// TODO: Deduct flight cost from users balance
+app.post("/bookFlight", (req, res1) => {
+	console.log(req.body);
+	const flights = client.db("ask").collection("flights");
+	var query = { flight_num: req.body.flight_num };
+	var vals = { $set: {status: "booked", booked_by: req.body.user } };
+	flights.updateOne(query, vals, function(err, res) {
+		if (err) throw err;
+		console.log("Document updated in bookFlight!");
+		res1.send(JSON.stringify("success!"));
+	});
+});
+
+// Makes request to swap airlines
+app.post("/changeFlight", (req, res) => {
+	console.log(req.body);
+	const requests = client.db("ask").collection("requests");
+	const flights = client.db("ask").collection("flights");
+
+	// 1.) find users flight he's booked on
+	flights.findOne({booked_by: req.body.user}, function(err, result) {
+		if (err) throw err;
+		if (result) {
+			console.log(result);
+			// 2.) Find flight they want to switch too
+			flights.findOne({flight_num: req.body.switch_num}, function(err, swapFlight) {
+				if (err) throw err;
+				if (swapFlight) {
+					// 3.) Add new document (requests)
+					try {
+						requests.insertOne( { user: req.body.user, from_flight_num: result.flight_num, from_comp: result.comp,
+											  to_flight_num: swapFlight.flight_num, to_comp: swapFlight.comp, status: "unapproved"} );
+						console.log("Request made successfully!");
+						res.send({valid: true});
+					}
+					catch(e) {
+						console.log(e);
+					}
+				}
+				else {
+					console.log("User wants to swap to unexisting flight!");
+					res.send({valid: false});
+				}
+			});
+		}
+		else {
+			console.log("User hasn't booked any flights.");
+			res.send({ valid: false });
+		}
+	});
 });
 
 // [DATABASE] Verifies username/password from records stored in database
 app.post("/login", (req, res) => {
-		const logins = client.db("ask").collection("logins");
-		// perform actions on the collection object
-		logins.findOne({username: req.body.username}, function(err, result) {
-			if (err) throw err;
-			if (result) {
-				console.log(result);
-				if (req.body.password == result.password) {
-					console.log("Login successful!");
-					currLoggedIn = req.body.username;
-					res.send({ valid: true });
-				}
-				else {
-					console.log("Incorrect Password!");
-					res.send({ valid: false });
-				}
+	const logins = client.db("ask").collection("logins");
+	logins.findOne({username: req.body.username}, function(err, result) {
+		if (err) throw err;
+		if (result) {
+			console.log(result);
+			if (req.body.password == result.password) {
+				console.log("Login successful!");
+				currLoggedIn = req.body.username;
+				res.send({ valid: true });
 			}
 			else {
-				console.log("User not found!");
+				console.log("Incorrect Password!");
 				res.send({ valid: false });
 			}
-		})
+		}
+		else {
+			console.log("User not found!");
+			res.send({ valid: false });
+		}
+	})
 });
 
 // [DATABASE] Adds username/password combo to database
 app.post("/createUser", (req, res) => {
 
-	// for (var i in avail_addresses) {
+	const logins = client.db("ask").collection("logins");
 
-	// 	login.findOne({
-	// 		address: avail_addresses[i]
-	// 	}, function (err, found) {
-	// 		if (!found) {
-	// 			var loginData = {
-	// 				username: req.body.username,
-	// 				password: req.body.password,
-	// 				address: avail_addresses[i],
-	// 				balance: req.body.balance
-	// 			}
+	var user = req.body.username;
+	var pass = req.body.password;
+	var addr = req.body.address;
+	var bal = req.body.balance;
 
-	// 			console.log(req.body.username + " assigned address: " + loginData.address);
+	try {
+		logins.insertOne( { username: user, password: pass, address: addr, balance: bal} );
+	}
+	catch(e) {
+		console.log(e);
+	}
+});
 
-	// 			var data = new login(loginData);
-	// 			console.log(data);
-	// 			data.save()
-	// 				.then(item => {
-	// 					res.send("User created and saved to database");
-	// 					console.log("Saved user to database");
-	// 					console.log(data);
+// [DATABASE] Verifies username/password from records stored in database
+app.post("/airlineLogin", (req, res) => {
+	console.log(req.body);
+	const logins = client.db("ask").collection("airline_logins");
+	logins.findOne({username: req.body.username}, function(err, result) {
+		if (err) throw err;
+		if (result) {
+			console.log(result);
+			if (req.body.password == result.password) {
+				console.log("Login successful!");
+				currLoggedIn = req.body.username;
+				res.send({ valid: true });
+			}
+			else {
+				console.log("Incorrect Password!");
+				res.send({ valid: false });
+			}
+		}
+		else {
+			console.log("User not found!");
+			res.send({ valid: false });
+		}
+	});
+});
 
-	// 					// Instantiates given address to balance in contracts state
-	// 					sellMyStuffContract.methods.deposit(loginData.balance, loginData.address).send({
-	// 						from: admin
-	// 					}).then(function (r, e) {
-	// 						console.log(r);
-	// 					});
+// [DATABASE] Adds username/password combo to database
+// TODO: Deduct 1 eth from address
+app.post("/createAirline", (req, res) => {
 
-	// 				})
-	// 				.catch(err => {
-	// 					res.status(400).send("unable to save to database and create user on smart contract");
-	// 				});
-	// 		}
-	// 	});
-	// }
+	const logins = client.db("ask").collection("airline_logins");
+
+	var user = req.body.username;
+	var pass = req.body.password;
+	var addr = req.body.address;
+
+	try {
+		logins.insertOne( { username: user, password: pass, address: addr} );
+	}
+	catch(e) {
+		console.log(e);
+	}
+
+	// DEDUCT 1 ETH
+});
+
+/* 
+ * 1.) Pull base flight from request
+ * 2.) Pull req flight from request
+ * 3.) Pull base airline address from logins
+ * 4.) Pull req airline address from logins
+ * 5.) Send req airline address a "request" from base airline address to swap flights
+*/
+app.post("/approveReq", (req, res) => {
+	const flights = client.db("ask").collection("flights");
+	const requests = client.db("ask").collection("requests");
+
+
+});
+
+/*
+ * 1.) Find request with matching name
+ * 2.) Remove request from db
+*/
+app.post("/denyReq", (req, res) => {
+	const requests = client.db("ask").collection("requests");
+
+	console.log(req.body);
+
+	requests.findOne({user: req.body.user}, function(err, result) {
+		if (err) throw err;
+		if (result) {
+			requests.deleteOne( {user: req.body.user, from_flight_num: result.from_flight_num}, function(err, obj) {
+				if (err) throw err;
+				console.log("Request removed from db!");
+				res.send({valid: true});
+			});
+		}
+	});
 });
 
 //******************************************************/
