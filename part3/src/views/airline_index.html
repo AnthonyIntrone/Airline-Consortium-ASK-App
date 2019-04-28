@@ -19,6 +19,7 @@
 
     <!-- Custom Font -->
     <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Gugi|Open+Sans|Oswald" rel="stylesheet">
 
     <!-- Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -97,6 +98,9 @@
                         </form>
                     </ul>
                 </div>
+                <div style="padding-left: 16px;">
+                    <button type="button" onclick="removeFlights()" class="btn btn-danger">Remove Selected Flights</button>
+                </div>
             </nav>
             <div id="tableDIV" sylte="width: 80%;">
                 <p id="flightsTable"></p>
@@ -170,6 +174,26 @@
             var jsonObj = { flight_num: num, comp: airline, from: from, to: to, 
                             departing: departing, arriving: arriving, cost: price }
             req.send(JSON.stringify(jsonObj));
+
+            req.onload = function () {
+                console.log(JSON.parse(req.responseText));
+                getAirlineFlights();
+            }
+        }
+
+        function removeFlights() {
+            var req = new XMLHttpRequest();
+            req.open('POST', '/removeFlights', true);
+            req.setRequestHeader("Content-type", "application/json");
+
+            var nums = [];
+            for (var i=0; i<checkboxes.length; i++) {
+                if (checkboxes[i].checked) {
+                    nums.push(checkboxes[i].id);
+                }
+            }
+            
+            req.send(JSON.stringify(nums));
 
             req.onload = function () {
                 console.log(JSON.parse(req.responseText));

@@ -6,6 +6,10 @@ body {
     height: 100% !important;
 }
 
+button {
+    font-family: 'Open Sans', sans-serif;
+}
+
 .btn-circle {
     width: 50px;
     height: 50px;
@@ -19,6 +23,8 @@ body {
 .btn-req {
     width: 40px;
     height: 40px;
+    color: #1260af !important;
+    background-color: #e1e1e1 !important;
 }
 
 .dropdown-toggle {
@@ -29,7 +35,8 @@ body {
 }
 
 #title {
-    font-family: 'Impact', sans-serif;
+    /* font-family: 'Impact', sans-serif; */
+    font-family: 'Open Sans', sans-serif;
     color: #e1e1e1;
 }
 
@@ -107,7 +114,7 @@ table, td {
     color: #1260af;
 }
 
-#staticUser, #staticBalance {
+#staticUser, #staticBalance, #staticFlight, #staticRequest {
     /* background-color: #1260af; */
     color: #e1e1e1;
     border-color: #e1e1e1;

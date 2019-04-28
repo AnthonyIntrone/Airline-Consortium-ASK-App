@@ -1,5 +1,5 @@
 #title, #sub {
-    font-family: 'Impact', sans-serif;
+    font-family: 'Open Sans', sans-serif;
     color: #e1e1e1;
     text-align: center;
 }
@@ -11,7 +11,7 @@
 #sub {
     font-style: italic;
     /* background-color: #fff; */
-    /* color: #1260af; */
+    color: #4286f4;
 }
 
 #air{
@@ -87,6 +87,7 @@ html {
 
 #link {
     color: #e1e1e1;
+    font-family: 'Open Sans', sans-serif;
 }
 
 #username, #password {
@@ -105,6 +106,7 @@ html {
     background-color: #e1e1e1;
     color: #1260af;
     border-color: #1260af;
+    font-family: 'Open Sans', sans-serif;
 }
 
 #loginBtn {

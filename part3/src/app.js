@@ -124,6 +124,19 @@ app.post("/addFlight", (req, res) => {
 	}
 });
 
+app.post("/removeFlights", (req, res) => {
+	const flights = client.db("ask").collection("flights");
+	var nums = req.body;
+	console.log(nums);
+	for (var i=0; i<nums.length; ++i) {
+		flights.deleteOne( {flight_num: nums[i]}, function(err, obj) {
+			if (err) throw err;
+			console.log("Flight " + nums[i] + " removed from db!");
+		});
+	}
+	res.send(JSON.stringify("Flights removed from DB!"));
+});
+
 // [DATABASE] Gets all flights from the database for a given airline (given in req.body.user)
 app.post("/getAirlineFlights", (req, res) => {
 	const flights = client.db("ask").collection("flights");
@@ -169,17 +182,48 @@ app.post("/getAirlineRequests", (req, res) => {
 	});
 });
 
-// TODO: Deduct flight cost from users balance
 app.post("/bookFlight", (req, res1) => {
 	console.log(req.body);
 	const flights = client.db("ask").collection("flights");
-	var query = { flight_num: req.body.flight_num };
-	var vals = { $set: {status: "booked", booked_by: req.body.user } };
-	flights.updateOne(query, vals, function(err, res) {
+	const logins = client.db("ask").collection("logins");
+
+	// Check that user doesn't already have a booked flight
+	logins.findOne({username: req.body.user}, function(err, res) {
 		if (err) throw err;
-		console.log("Document updated in bookFlight!");
-		res1.send(JSON.stringify("success!"));
-	});
+		if (res.booked_num != -1) {
+			console.log("User has already booked a flight!");
+			res1.send(JSON.stringify("User has already booked a flight!"));
+		}
+		else {
+			// Update flights "booked_by"
+			var query = { flight_num: req.body.flight_num };
+			var vals = { $set: {status: "booked", booked_by: req.body.user } };
+			flights.updateOne(query, vals, function(err, res) {
+				if (err) throw err;
+				console.log("Flight updated in bookFlight!");
+				// res1.send(JSON.stringify("success!"));
+			});
+			// Update users balance and booked_num
+			// Find flight to pull cost
+			flights.findOne({flight_num: req.body.flight_num}, function(err, flight) {
+				if (err) throw err;
+				// Find user to pull balance
+				logins.findOne({username: req.body.user}, function (err, login) {
+					if (err) throw err;
+					var newBalance = login.balance - flight.cost;
+					var bookNum = flight.flight_num;
+					// Update users balance and booked flight
+					var query = {username: req.body.user};
+					var vals = { $set: {balance: newBalance, booked_num: bookNum} };
+					logins.updateOne(query, vals, function(err, res) {
+						if (err) throw err;
+						console.log("User updated in bookFlight!");
+						res1.send(JSON.stringify("success!"));
+					});
+				});
+			});
+		}
+	});		
 });
 
 // Makes request to swap airlines
@@ -187,6 +231,7 @@ app.post("/changeFlight", (req, res) => {
 	console.log(req.body);
 	const requests = client.db("ask").collection("requests");
 	const flights = client.db("ask").collection("flights");
+	const logins = client.db("ask").collection("logins");
 
 	// 1.) find users flight he's booked on
 	flights.findOne({booked_by: req.body.user}, function(err, result) {
@@ -202,7 +247,14 @@ app.post("/changeFlight", (req, res) => {
 						requests.insertOne( { user: req.body.user, from_flight_num: result.flight_num, from_comp: result.comp,
 											  to_flight_num: swapFlight.flight_num, to_comp: swapFlight.comp, status: "unapproved"} );
 						console.log("Request made successfully!");
-						res.send({valid: true});
+						// Update users balance and booked flight
+						var query = {username: req.body.user};
+						var vals = { $set: {request: "flight " + swapFlight.flight_num + " -- pending approval"} };
+						logins.updateOne(query, vals, function(err, result) {
+							if (err) throw err;
+							console.log("User updated!");
+							res.send(JSON.stringify({valid: true}));
+						});
 					}
 					catch(e) {
 						console.log(e);
@@ -216,7 +268,7 @@ app.post("/changeFlight", (req, res) => {
 		}
 		else {
 			console.log("User hasn't booked any flights.");
-			res.send({ valid: false });
+			res.send(JSON.stringify({valid: false}));
 		}
 	});
 });
