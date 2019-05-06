@@ -4,6 +4,7 @@
   "description": "A completely decentralized marketplace running on the Ethereum blockchain.",
   "main": "part1.js",
   "dependencies": {
+    "ethereumjs-tx": "^1.3.7",
     "express": "^4.16.4",
     "mongodb": "^3.2.3",
     "mongoose": "^5.4.11",

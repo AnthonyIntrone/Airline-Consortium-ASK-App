@@ -89,7 +89,7 @@
   <!--...........................................................................................................-->
 
   <script>
-    var user = '';
+    var glob_user = '';
     var bal = '';
     var fli = '';
     var req = '';
@@ -153,19 +153,21 @@
       itemTable.appendChild(table);
     }
 
-    function getLogin() {
+    function getLogin(user) {
 
       var req = new XMLHttpRequest();
       req.open('POST', '/getUser', true);
       req.setRequestHeader("Content-type", "application/json");
 
-      req.send();
+      console.log("IN GETLOGIN");
+
+      req.send(JSON.stringify({username: user}));
 
       req.onload = function () {
         var response = JSON.parse(req.responseText);
         console.log(response);
         var username = response.username;
-        user = username;
+        glob_user = username;
         var balance = response.balance;
         bal = balance;
         var flight = response.booked_num;
@@ -196,7 +198,7 @@
         }
       }
 
-      req.send(JSON.stringify({user: user, flight_num: flight_num}));
+      req.send(JSON.stringify({user: glob_user, flight_num: flight_num}));
 
       req.onload = function () {
         console.log("bookFlight() response...");
@@ -220,19 +222,22 @@
         }
       }
 
-      req.send(JSON.stringify({user: user, switch_num: flight_to_switch_to}));
+      req.send(JSON.stringify({user: glob_user, switch_num: flight_to_switch_to}));
 
       req.onload = function () {
         alert(req.responseText);
         var back = JSON.parse(req.responseText);
         if (back.valid) {
-          document.getElementById('staticRequest').innerHTML = "flight " + flight_to_switch_to + " -- pending approval";
+          document.getElementById('staticRequest').innerHTML = "flight " + flight_to_switch_to + " -- unapproved";
         }
       }
   }
 
     window.onload = function () {
-      getLogin();
+      var url = new URL(window.location.href);
+      var user = url.searchParams.get("user");
+      console.log("user from params: " + user);
+      getLogin(user);
     };
 
   </script>

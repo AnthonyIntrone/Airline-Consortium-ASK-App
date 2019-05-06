@@ -122,8 +122,8 @@
     <!--...........................................................................................................-->
 
     <script>
-        var user = '';
-        var bal = '';
+        var glob_user = '';
+        var glob_bal = '';
 
         var checkboxes = [];
 
@@ -131,6 +131,22 @@
             var req = new XMLHttpRequest();
             req.open('POST', '/approveReq', true);
             req.setRequestHeader("Content-type", "application/json");
+
+            var user_req = '';
+
+            // Get all ID's of selected checkboxes
+            for (var i = 0; i < checkboxes.length; i++) {
+                if (checkboxes[i].checked) {
+                    user_req = checkboxes[i].id;
+                    break;
+                }
+            }
+
+            req.send(JSON.stringify({user: user_req}));
+
+            req.onload = function () {
+                alert(req.responseText);
+            }
         }
 
         /*
@@ -154,7 +170,7 @@
 
             req.onload = function () {
                 console.log(JSON.parse(req.responseText));
-                getAirlineRequests();
+                getAirlineRequests(glob_user);
             }
         }
 
@@ -177,7 +193,7 @@
 
             req.onload = function () {
                 console.log(JSON.parse(req.responseText));
-                getAirlineFlights();
+                getAirlineFlights(glob_user);
             }
         }
 
@@ -197,7 +213,7 @@
 
             req.onload = function () {
                 console.log(JSON.parse(req.responseText));
-                getAirlineFlights();
+                getAirlineFlights(glob_user);
             }
         }
 
@@ -205,16 +221,16 @@
             window.location.href = "airline_login.html";
         }
 
-        function getAirlineFlights() {
+        function getAirlineFlights(user) {
+            console.log("getAirlineFlights...");
+            console.log("USER IS: " + user);
+            console.log("glob_user: " + glob_user);
             var req = new XMLHttpRequest();
             req.open('POST', '/getAirlineFlights', true);
             req.setRequestHeader("Content-type", "application/json");
-            req.send(JSON.stringify({
-                user: user
-            }));
+            req.send(JSON.stringify( { user: user } ));
 
             req.onload = function () {
-                console.log("In getFlights():");
                 var allFlights = JSON.parse(req.responseText);
                 console.log(allFlights);
 
@@ -228,7 +244,8 @@
             }
         }
 
-        function getAirlineRequests() {
+        function getAirlineRequests(user) {
+            console.log("glob_user: " + glob_user);
             var req = new XMLHttpRequest();
             req.open('POST', '/getAirlineRequests', true);
             req.setRequestHeader("Content-type", "application/json");
@@ -284,24 +301,24 @@
             itemTable.appendChild(table);
         }
 
-        function getLogin() {
+        function getLogin(user) {
 
             var req = new XMLHttpRequest();
             req.open('POST', '/getAirlineUser', true);
             req.setRequestHeader("Content-type", "application/json");
 
-            req.send();
+            req.send(JSON.stringify({username: user}));
 
             req.onload = function () {
                 var response = JSON.parse(req.responseText);
                 console.log(response);
                 var username = response.username;
-                user = username;
+                glob_user = username;
                 var balance = response.balance;
-                bal = balance;
+                glob_bal = balance;
                 document.getElementById('staticUser').innerHTML = username;
-                getAirlineFlights();
-                getAirlineRequests();
+                getAirlineFlights(user);
+                getAirlineRequests(user);
             }
         }
 
@@ -336,7 +353,10 @@
         }
 
         window.onload = function () {
-            getLogin();
+            var url = new URL(window.location.href);
+            var user = url.searchParams.get("user");
+            console.log("user from params: " + user);
+            getLogin(user);
         };
     </script>
 

@@ -68,6 +68,13 @@
                     <input type="address" class="form-control" aria-label="Default" aria-describedby="addr" id="address">
                 </div>
 
+                <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="priv">Private Key:</span>
+                        </div>
+                        <input type="password" class="form-control" aria-label="Default" aria-describedby="priv" id="private">
+                    </div>
+
                  <div class="input-group">
                      <div class="input-group-prepend">
                          <span class="input-group-text" id="bal">Balance ($):</span>
@@ -108,11 +115,13 @@
             var username = document.getElementById('username').value;
             var password = document.getElementById('password').value;
             var address = document.getElementById('address').value;
+            var priv_key = document.getElementById('private').value;
             var balance = document.getElementById('balance').value;
 
             console.log(username);
             console.log(password);
             console.log(address);
+            console.log(priv_key);
             console.log(balance);
 
             if (username == '') {
@@ -124,11 +133,14 @@
             else if (address == '') {
                 alert("Please enter a valid Ethereum address");
             }
+            else if (priv_key == '') {
+                alert("Please enter a valid private key");
+            }
             else if (balance == '') {
                 alert("Please enter valid balance");
             }
             else {
-                var jsonToSend = { "username": username, "password": password, "address": address, "balance": balance };
+                var jsonToSend = { "username": username, "password": password, "address": address, "priv_key": priv_key, "balance": balance };
 
                 var req = new XMLHttpRequest();
                 req.open('POST', '/createUser', true);

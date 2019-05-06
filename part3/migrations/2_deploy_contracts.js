@@ -1,5 +1,5 @@
-var sellMyStuff = artifacts.require("sellMyStuff.sol");
+var airlineAsk = artifacts.require("airlineAsk.sol");
 
 module.exports = function(deployer) {
-  deployer.deploy(sellMyStuff);
+  deployer.deploy(airlineAsk);
 };

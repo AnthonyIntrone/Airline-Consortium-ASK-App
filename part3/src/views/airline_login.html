@@ -113,7 +113,7 @@
                     var valid = response.valid;
                     console.log(valid);
                     if (valid) {
-                        window.location.href = "/views/airline_index.html";
+                        window.location.href = "/views/airline_index.html?user="+username;
                     } else {
                         alert("ERROR! Incorrect login");
                     }

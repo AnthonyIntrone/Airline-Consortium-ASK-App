@@ -46,7 +46,7 @@
                 <h1 class="display-1" id="title">Airline Consortium</h1>
 
                 <h4 id="sub">Enter your airlines' credentials below and join the fun!</h4>
-                <h5 id="sub">Note: Membership costs an initial fee of 1 Ether.</h5>
+                <!-- <h5 id="sub">Note: Membership costs an initial fee of 1 Ether.</h5> -->
 
                 <div class="input-group">
                     <div class="input-group-prepend">
@@ -69,12 +69,12 @@
                     <input type="address" class="form-control" aria-label="Default" aria-describedby="addr" id="address">
                 </div>
 
-                 <!-- <div class="input-group">
-                     <div class="input-group-prepend">
-                         <span class="input-group-text" id="bal">Balance ($):</span>
-                     </div>
-                     <input type="number" class="form-control" aria-label="Default" aria-describedby="bal" id="balance">
-                 </div> -->
+                <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="priv">Private Key:</span>
+                        </div>
+                        <input type="password" class="form-control" aria-label="Default" aria-describedby="priv" id="private">
+                    </div>
 
                 <div class="row text-center">
                     <div class="col-6">
@@ -95,12 +95,13 @@
 
     <script>
 
-        function create() {
+        function join() {
 
             var username = document.getElementById('username').value;
             var password = document.getElementById('password').value;
             var address = document.getElementById('address').value;
-            var balance = document.getElementById('balance').value;
+            var priv_key = document.getElementById('private').value;
+            // var balance = document.getElementById('balance').value;
 
             if (username == '') {
                 alert("Please enter username");
@@ -111,11 +112,11 @@
             else if (address == '') {
                 alert("Please enter a valid Ethereum address");
             }
-            else if (balance == '') {
-                alert("Please enter valid balance");
+            else if (priv_key == '') {
+                alert("Please enter a valid private key");
             }
             else {
-                var jsonToSend = { "username": username, "password": password, "address": address};
+                var jsonToSend = { "username": username, "password": password, "address": address, "priv_key": priv_key};
 
                 var req = new XMLHttpRequest();
                 req.open('POST', '/createAirline', true);

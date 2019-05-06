@@ -24,6 +24,10 @@
 // const fs = require('fs');
 // const mnemonic = fs.readFileSync(".secret").toString().trim();
 
+var HDWalletProvider = require("truffle-hdwallet-provider");
+
+var mnemonic = "stumble balcony exchange lonely swarm error deposit soon tragic soon dragon jazz";
+
 module.exports = {
   /**
    * Networks define how you connect to your ethereum client and let you set the
@@ -46,7 +50,17 @@ module.exports = {
       host: "127.0.0.1",     // Localhost (default: none)
       port: 7545,            // Standard Ethereum port (default: none)
       network_id: "*",       // Any network (default: none)
-     }
+     },
+
+	ropsten: {
+	  provider: function() { 
+	    return new HDWalletProvider(mnemonic, "https://ropsten.infura.io/v3/0a71703c852247ca9dfc5336a78ef7fa"); 
+      },
+      network_id: 3,
+	  gas: 8000000,
+	  gasPrice: 4000000000,
+	  skipDryRun: true
+    }
 
     // Another network with more advanced options...
     // advanced: {

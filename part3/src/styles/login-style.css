@@ -50,7 +50,7 @@ html {
     /* margin-left: 16px; */
 }
 
-#address {
+#address, #private {
     background-color: #e1e1e1;
     color: #e1e1e1;
     border-color: #e1e1e1;
@@ -62,7 +62,7 @@ html {
     text-align: center;
 }
 
-#user, #pass, #bal, #balance, #addr {
+#user, #pass, #bal, #balance, #addr, #priv {
     background-color: #e1e1e1;
     color: #e1e1e1;
     border-color: #e1e1e1;

@@ -13,7 +13,7 @@
     <!-- Custom Font -->
     <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Gugi|Open+Sans|Oswald" rel="stylesheet">
-    
+
     <!-- Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
@@ -113,7 +113,7 @@
                     var valid = response.valid;
                     console.log(valid);
                     if (valid) {
-                        window.location.href = "/views/index.html";
+                        window.location.href = "/views/index.html?user="+username;
                     } else {
                         alert("ERROR! Incorrect login");
                     }
