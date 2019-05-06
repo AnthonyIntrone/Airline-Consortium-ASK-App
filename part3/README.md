@@ -40,7 +40,7 @@ There are two different ways to use the application, either as a `User` or as a 
 * Book and pay for a flight
 * Request to change flights to another (if the `User` has already booked a flight) 
 
-![Alt text](part3/src/assets/user_home.png)
+![Alt text](src/assets/user_home.png)
 
 Requesting to change flights to another that's offered by a different airline will route the request to the current airline for approval, and then to the requested airline for approval. At at time through the whole request process, users can see the current status of the request by checking the status bar in the users homepage.
 
@@ -50,7 +50,7 @@ The airline homepage of the application allows airlines to have total management
 * Add or remove scheduled flights
 * Approve or deny flight change requests initiated by one of the airlines customers  
 
-![Alt text](part3/src/assets/airline_a_home_1.png)
+![Alt text](src/assets/airline_a_home_1.png)
 
 If a user of the airline initiates a request, it will show up in the request queue as `unapproved`. Once the airline approves the request, the status is updated to `pending approval`, and will now show up in the other airlines request queue for them to approve. After they approve the request, the first airline will pay the second airline the flight cost, and the first airline will be free to handle payment from the user in anyway they see fit (added fee, pays both flight costs, restocking fees, etc). All of said transactions are recorded on the blockchain.
 
@@ -60,25 +60,25 @@ Below describes `User`, who originally books `flight 1` from `Airline A`, and th
 
 * `User` has booked the flight and requested to change
 
-![Alt text](part3/src/assets/user_home.png)
+![Alt text](src/assets/user_home.png)
 
 * `Airline A's` request queue gets populated with the request (but not `Airline B's`)
 
-![Alt text](part3/src/assets/airline_a_home_1.png)
-![Alt text](part3/src/assets/airline_b_home_1.png)
+![Alt text](src/assets/airline_a_home_1.png)
+![Alt text](src/assets/airline_b_home_1.png)
 
 * `Airline A` then approves the request, updating it's status (which the `User` can see in their status bar), and placing it in `Airline B's` request queue
 
-![Alt text](part3/src/assets/user_req_status.png)
-![Alt text](part3/src/assets/airline_a_req_status.png)
-![Alt text](part3/src/assets/airline_b_req_status.png)
+![Alt text](src/assets/user_req_status.png)
+![Alt text](src/assets/airline_a_req_status.png)
+![Alt text](src/assets/airline_b_req_status.png)
 
 * `Airline B` then also approves the reqest, initiating a transaction of payment between `Airline A` and `Airline B`, and clearing both of their request queues. The User's status bar gets updated to reflect the change in their flight (the flights table gets updated as well), and the request gets removed from the database.
 
-![Alt text](part3/src/assets/user_approved.png)
-![Alt text](part3/src/assets/airline_a_after_approve.png)
-![Alt text](part3/src/assets/airline_b_after_approve.png)
-![Alt text](part3/src/assets/term_trans.png)
+![Alt text](src/assets/user_approved.png)
+![Alt text](src/assets/airline_a_after_approve.png)
+![Alt text](src/assets/airline_b_after_approve.png)
+![Alt text](src/assets/term_trans.png)
 
 You can view this demo transaction on etherscan [here](https://ropsten.etherscan.io/tx/0xc92733a3de572b7fba45e4793f1fd8079c52ee476482381486688f9c26e8aebe)
 
